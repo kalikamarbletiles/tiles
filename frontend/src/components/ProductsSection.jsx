@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Eye } from 'lucide-react';
+import { Eye, Box } from 'lucide-react';
 import { products } from '../mock/mockData';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import RoomVisualization3D from './RoomVisualization3D';
 
 const ProductsSection = () => {
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [is3DViewOpen, setIs3DViewOpen] = useState(false);
+
+  const handleView3D = (product) => {
+    setSelectedProduct(product);
+    setIs3DViewOpen(true);
+  };
+
   return (
     <section className="bg-gradient-to-b from-white to-gray-50 py-16">
       <div className="max-w-[1600px] mx-auto px-4">
@@ -34,9 +43,21 @@ const ProductsSection = () => {
                     NEW
                   </Badge>
                 )}
-                <button className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:shadow-lg">
-                  <Eye size={16} className="text-gray-700" />
-                </button>
+                <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button 
+                    className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:shadow-lg hover:scale-110 transition-all"
+                    title="Quick View"
+                  >
+                    <Eye size={16} className="text-gray-700" />
+                  </button>
+                  <button 
+                    onClick={() => handleView3D(product)}
+                    className="w-8 h-8 bg-[#FF8C00] rounded-full flex items-center justify-center shadow-md hover:shadow-lg hover:scale-110 transition-all"
+                    title="3D Room View"
+                  >
+                    <Box size={16} className="text-white" />
+                  </button>
+                </div>
               </div>
               <div className="p-4">
                 <p className="text-xs text-gray-500 mb-1">{product.size} | {product.type}</p>
@@ -55,6 +76,13 @@ const ProductsSection = () => {
           </Button>
         </div>
       </div>
+
+      {/* 3D Visualization Modal */}
+      <RoomVisualization3D
+        open={is3DViewOpen}
+        onClose={() => setIs3DViewOpen(false)}
+        product={selectedProduct}
+      />
     </section>
   );
 };
